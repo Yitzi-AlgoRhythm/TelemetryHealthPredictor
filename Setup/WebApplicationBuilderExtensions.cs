@@ -1,4 +1,5 @@
 ﻿using TelemetryHealthPredictor.Config;
+using TelemetryHealthPredictor.Services.Connection;
 
 namespace TelemetryHealthPredictor.Setup
 {
@@ -11,9 +12,9 @@ namespace TelemetryHealthPredictor.Setup
             builder.Services.Configure<KafkaConsumerConfig>
                 (builder.Configuration.GetSection(nameof(KafkaConsumerConfig)));
 
-            //builder.Services.AddSingleton<ILoggerTD, ConsoleLogger>();
+            builder.Services.AddSingleton<WebsocketService>();
 
-            //builder.Services.AddSingleton<IcdDeserializer>();
+            //builder.Services.AddSingleton<ILoggerTD, ConsoleLogger>();
 
             return builder;
         }
