@@ -1,0 +1,6 @@
+@TelemetryHealthPredictor_HostAddress = http://localhost:5246
+
+GET {{TelemetryHealthPredictor_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
