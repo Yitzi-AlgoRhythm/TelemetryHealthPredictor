@@ -30,6 +30,8 @@ namespace TelemetryHealthPredictor.Config
                 settings.FPath, p => CSVReader.ReadMatrix(p));
             Matrix<double> h = Load(nameof(settings.HPath),
                 settings.HPath, p => CSVReader.ReadMatrix(p));
+            Matrix<double> i = Load(nameof(settings.IdentityPath),
+                settings.IdentityPath, p => CSVReader.ReadMatrix(p));
 
             int n = stateNames.Length;
             int m = measuredNames.Length;
@@ -65,6 +67,7 @@ namespace TelemetryHealthPredictor.Config
                 InitMeasurementNoiseCov_R0 = bigR0,
                 TransitionPrediction_F = f,
                 StateToMeasurement_H = h,
+                IdentityMatrix_I = i,
                 ForgettingFactor_b = b
             };
         }

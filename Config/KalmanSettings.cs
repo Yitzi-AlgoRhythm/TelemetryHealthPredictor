@@ -14,5 +14,6 @@
         public string RMatrixPath { get; set; } = string.Empty;
         public string FPath { get; set; } = string.Empty;
         public string HPath { get; set; } = string.Empty;
+        public string IdentityPath {  get; set; } = string.Empty;
     }
 }

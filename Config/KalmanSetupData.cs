@@ -14,6 +14,7 @@ namespace TelemetryHealthPredictor.Config
         public required Matrix<double> InitMeasurementNoiseCov_R0 { get; init; }
         public required Matrix<double> TransitionPrediction_F {  get; init; }
         public required Matrix<double> StateToMeasurement_H { get; init; }
+        public required Matrix<double> IdentityMatrix_I { get; init; }
         public required double ForgettingFactor_b { get; init; }
     }
 }

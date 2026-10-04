@@ -1,4 +1,4 @@
-﻿namespace TelemetryHealthPredictor.Model
+﻿namespace TelemetryHealthPredictor.Model.AlgorithmResultObjects
 {
     public class AlgorithmResult
     {
