@@ -1,4 +1,6 @@
-var builder = WebApplication.CreateBuilder(args);
+using TelemetryHealthPredictor.Services.Connection;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -6,7 +8,9 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
+
+app.MapHub<UAVHealthDataHub>("/uav-health-data");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

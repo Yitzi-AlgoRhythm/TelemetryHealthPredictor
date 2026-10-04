@@ -7,12 +7,10 @@ namespace TelemetryHealthPredictor.Setup
     {
         public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
         {
-            builder.Services.AddControllers();
+            builder.Services.AddSignalR();
 
             builder.Services.Configure<KafkaConsumerConfig>
                 (builder.Configuration.GetSection(nameof(KafkaConsumerConfig)));
-
-            builder.Services.AddSingleton<WebsocketService>();
 
             builder.Services.Configure<KalmanSettings>
                 (builder.Configuration.GetSection(nameof(KalmanSettings)));
