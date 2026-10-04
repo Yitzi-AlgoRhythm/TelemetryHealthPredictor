@@ -14,6 +14,10 @@ namespace TelemetryHealthPredictor.Setup
 
             builder.Services.AddSingleton<WebsocketService>();
 
+            builder.Services.Configure<KalmanSettings>
+                (builder.Configuration.GetSection(nameof(KalmanSettings)));
+            builder.Services.AddSingleton(KalmanSetupDataBuilder.Build);
+
             //builder.Services.AddSingleton<ILoggerTD, ConsoleLogger>();
 
             return builder;
