@@ -1,6 +1,10 @@
 ﻿using TelemetryHealthPredictor.Config;
 using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
-using TelemetryHealthPredictor.Services.Connection;
+using TelemetryHealthPredictor.Services.Algorithms.Abstractions;
+using TelemetryHealthPredictor.Services.Algorithms.Implementations;
+using TelemetryHealthPredictor.Services.Algorithms.Mockups;
+using TelemetryHealthPredictor.Services.Dataflow;
+using TelemetryHealthPredictor.Services.Kafka;
 
 namespace TelemetryHealthPredictor.Setup
 {
@@ -23,7 +27,16 @@ namespace TelemetryHealthPredictor.Setup
 
             builder.Services.AddSingleton<MahalanobisData>();
 
-            builder.Services.AddSingleton<BroadcastService>();
+            builder.Services.AddSingleton<IDecoder, Decoder>();
+            builder.Services.AddSingleton<IKalmanFilter, KalmanFilterMockup>();
+            builder.Services.AddSingleton<IMahalanobis, MahalanobisMockup>();
+            builder.Services.AddSingleton<ICusum, CusumMockup>();
+            builder.Services.AddSingleton<IFusion, FusionMockup>();
+            builder.Services.AddSingleton<IResultSender, BroadcastService>();
+
+            builder.Services.AddSingleton<IPipeline, Pipeline>();
+
+            builder.Services.AddHostedService<KafkaConsumerService>();
 
             return builder;
         }

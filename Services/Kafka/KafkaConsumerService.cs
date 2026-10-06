@@ -51,7 +51,10 @@ namespace TelemetryHealthPredictor.Services.Kafka
                     catch (ConsumeException ex)
                     {
                         Console.WriteLine(ex.Message);
+                        Console.WriteLine();
                         Console.WriteLine(ex.StackTrace);
+
+                        await Task.Delay(2000);
                     }
                 }
             }
