@@ -7,6 +7,8 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Mockups
     {
         public AlgorithmResult FusionDelegate(Tuple<MahalanobisResult, Dictionary<string, double>> combinedResult)
         {
+            Console.WriteLine("Fusing results");
+
             return new AlgorithmResult()
             {
                 HealthScore = 100

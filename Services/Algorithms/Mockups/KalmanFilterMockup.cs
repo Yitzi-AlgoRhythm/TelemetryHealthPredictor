@@ -8,6 +8,8 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Mockups
     {
         public FilteredResult KalmanFilterDelegate(KeyValuePair<string, double> parameterValue)
         {
+            Console.WriteLine($"Running Kalman Filter on {parameterValue}");
+
             VectorBuilder<double> vectorBuilder = Vector<double>.Build;
             MatrixBuilder<double> matrixBuilder = Matrix<double>.Build;
 

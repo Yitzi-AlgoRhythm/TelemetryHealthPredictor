@@ -9,6 +9,7 @@ namespace TelemetryHealthPredictor.Services.Dataflow
     {
         private readonly TransformBlock<string, KeyValuePair<string, double>> _decoderBlock;
         private readonly TransformBlock<KeyValuePair<string, double>, FilteredResult> _kalmanBlock;
+        private readonly BroadcastBlock<FilteredResult> _broadcastBlock;
         private readonly TransformBlock<FilteredResult, MahalanobisResult> _mahalanobisBlock;
         private readonly TransformBlock<FilteredResult, Dictionary<string, double>> _cusumBlock;
         private readonly JoinBlock<MahalanobisResult, Dictionary<string, double>> _joinBlock;
@@ -43,6 +44,7 @@ namespace TelemetryHealthPredictor.Services.Dataflow
 
             _decoderBlock = new(decoder.DecoderDelegate, algorithmBlockOptions);
             _kalmanBlock = new(kalmanFilter.KalmanFilterDelegate, algorithmBlockOptions);
+            _broadcastBlock = new(result => result);
             _mahalanobisBlock = new(mahalanobis.MahalanobisDelegate, algorithmBlockOptions);
             _cusumBlock = new(cusum.CusumDelegate, algorithmBlockOptions);
             _joinBlock = new(groupingOptions);
@@ -55,8 +57,9 @@ namespace TelemetryHealthPredictor.Services.Dataflow
             };
 
             _decoderBlock.LinkTo(_kalmanBlock, linkOptions);
-            _kalmanBlock.LinkTo(_mahalanobisBlock, linkOptions);
-            _kalmanBlock.LinkTo(_cusumBlock, linkOptions);
+            _kalmanBlock.LinkTo(_broadcastBlock, linkOptions);
+            _broadcastBlock.LinkTo(_mahalanobisBlock, linkOptions);
+            _broadcastBlock.LinkTo(_cusumBlock, linkOptions);
             _mahalanobisBlock.LinkTo(_joinBlock.Target1, linkOptions);
             _cusumBlock.LinkTo(_joinBlock.Target2, linkOptions);
             _joinBlock.LinkTo(_fusionBlock, linkOptions);

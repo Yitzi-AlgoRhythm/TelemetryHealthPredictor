@@ -7,6 +7,8 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Mockups
     {
         public Dictionary<string, double> CusumDelegate(FilteredResult filteredResult)
         {
+            Console.WriteLine("Calculating CUSUMs");
+
             return [];
         }
     }

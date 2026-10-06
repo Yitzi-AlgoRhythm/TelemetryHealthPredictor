@@ -7,6 +7,8 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Mockups
     {
         public MahalanobisResult MahalanobisDelegate(FilteredResult filteredResult)
         {
+            Console.WriteLine("Calculating Mahalanobis Distance");
+
             return new MahalanobisResult()
             {
                 DistanceScore = 0,
