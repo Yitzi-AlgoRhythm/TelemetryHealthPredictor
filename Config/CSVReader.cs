@@ -42,5 +42,13 @@ namespace TelemetryHealthPredictor.Config
 
             return values.ToArray();
         }
+
+        public static T Load<T>(string settingName, string path, Func<string, T> reader)
+        {
+            if (!File.Exists(path))
+                throw new FileNotFoundException($"{settingName}: file not found at '{path}'.", path);
+
+            return reader(path);
+        }
     }
 }

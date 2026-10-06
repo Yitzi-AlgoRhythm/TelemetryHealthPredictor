@@ -1,9 +1,10 @@
 ﻿using System.Text.Json;
 using ParameterDataLib;
+using TelemetryHealthPredictor.Services.Algorithms.Abstractions;
 
-namespace TelemetryHealthPredictor.Services.Kafka
+namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
 {
-    public class Decoder
+    public class Decoder : IDecoder
     {
         public KeyValuePair<string, double> DecoderDelegate(string json)
         {

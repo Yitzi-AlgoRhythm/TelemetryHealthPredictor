@@ -1,4 +1,5 @@
 ﻿using TelemetryHealthPredictor.Config;
+using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
 using TelemetryHealthPredictor.Services.Connection;
 
 namespace TelemetryHealthPredictor.Setup
@@ -14,7 +15,13 @@ namespace TelemetryHealthPredictor.Setup
 
             builder.Services.Configure<KalmanSettings>
                 (builder.Configuration.GetSection(nameof(KalmanSettings)));
-            builder.Services.AddSingleton(KalmanSetupDataBuilder.Build);
+            builder.Services.AddSingleton(KalmanDataBuilder.Build);
+
+            builder.Services.Configure<CusumSettings>
+                (builder.Configuration.GetSection(nameof(CusumSettings)));
+            builder.Services.AddSingleton(CusumDataBuilder.Build);
+
+            builder.Services.AddSingleton<MahalanobisData>();
 
             builder.Services.AddSingleton<BroadcastService>();
 
