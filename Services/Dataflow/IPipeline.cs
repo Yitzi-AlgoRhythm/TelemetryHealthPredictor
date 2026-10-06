@@ -2,6 +2,8 @@
 {
     public interface IPipeline
     {
+        public Task Completion();
+
         public void BeginAlgorithm(string json);
 
         public void Complete();

@@ -15,8 +15,6 @@ namespace TelemetryHealthPredictor.Services.Dataflow
         private readonly TransformBlock<Tuple<MahalanobisResult, Dictionary<string, double>>, AlgorithmResult> _fusionBlock;
         private readonly ActionBlock<AlgorithmResult> _senderBlock;
 
-        public required Task Completion { get; init; }
-
         public Pipeline
         (
             IDecoder decoder, 
@@ -63,8 +61,6 @@ namespace TelemetryHealthPredictor.Services.Dataflow
             _cusumBlock.LinkTo(_joinBlock.Target2, linkOptions);
             _joinBlock.LinkTo(_fusionBlock, linkOptions);
             _fusionBlock.LinkTo(_senderBlock, linkOptions);
-
-            Completion = _senderBlock.Completion;
         }
         public void BeginAlgorithm(string json)
         {
@@ -79,6 +75,11 @@ namespace TelemetryHealthPredictor.Services.Dataflow
         public void Fault(Exception ex)
         {
             ((IDataflowBlock)_decoderBlock).Fault(ex);
+        }
+
+        public async Task Completion()
+        {
+            await _senderBlock.Completion;
         }
     }
 }
