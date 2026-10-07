@@ -1,9 +1,10 @@
-﻿using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
+﻿using MathNet.Numerics.LinearAlgebra;
+using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 
 namespace TelemetryHealthPredictor.Services.Algorithms.Abstractions
 {
     public interface IMahalanobis
     {
-        public MahalanobisResult MahalanobisDelegate(FilteredResult filteredResult);
+        public MahalanobisResult MahalanobisDelegate(Vector<double> filteredResult);
     }
 }

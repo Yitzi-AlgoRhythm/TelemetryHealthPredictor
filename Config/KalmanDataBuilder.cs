@@ -45,11 +45,17 @@ namespace TelemetryHealthPredictor.Config
 
             double b = settings.ForgettingFactor;
 
-
-
-            return new KalmanData()
+            Dictionary<string, int> measuredVariablesDict = new Dictionary<string, int>();
+            for (int index = 0; index < measuredNames.Length; index++)
             {
-                MeasuredVariableNames = measuredNames,
+                measuredVariablesDict[measuredNames[index]] = index;
+            }
+
+
+
+            return new KalmanData(measuredNames.Length)
+            {
+                MeasuredVariableNames = measuredVariablesDict,
                 StateVariableNames = stateNames,
                 TransitionMatrix = f,
                 StateToMeasShapeMatrix = h,
@@ -59,7 +65,10 @@ namespace TelemetryHealthPredictor.Config
                 PostMeasStateUncertaintyMatrix = p0,
                 ProcessNoiseMatrix = bigQ0,
                 MeasBiasVector = r0,
-                MeasNoiseMatrix = bigR0
+                MeasNoiseMatrix = bigR0,
+                ForgettingFactor = b,
+                Means = Vector<double>.Build.Dense(stateNames.Length),
+                StandardDeviations = Vector<double>.Build.Dense(stateNames.Length)
             };
         }
     }

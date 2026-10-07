@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks.Dataflow;
-using ParameterDataLib;
+using MathNet.Numerics.LinearAlgebra;
 using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 using TelemetryHealthPredictor.Services.Algorithms.Abstractions;
 
@@ -8,10 +8,10 @@ namespace TelemetryHealthPredictor.Services.Dataflow
     public class Pipeline : IPipeline
     {
         private readonly TransformBlock<string, KeyValuePair<string, double>> _decoderBlock;
-        private readonly TransformBlock<KeyValuePair<string, double>, FilteredResult> _kalmanBlock;
-        private readonly BroadcastBlock<FilteredResult> _broadcastBlock;
-        private readonly TransformBlock<FilteredResult, MahalanobisResult> _mahalanobisBlock;
-        private readonly TransformBlock<FilteredResult, Dictionary<string, double>> _cusumBlock;
+        private readonly TransformManyBlock<KeyValuePair<string, double>, Vector<double>> _kalmanBlock;
+        private readonly BroadcastBlock<Vector<double>> _broadcastBlock;
+        private readonly TransformBlock<Vector<double>, MahalanobisResult> _mahalanobisBlock;
+        private readonly TransformBlock<Vector<double>, Dictionary<string, double>> _cusumBlock;
         private readonly JoinBlock<MahalanobisResult, Dictionary<string, double>> _joinBlock;
         private readonly TransformBlock<Tuple<MahalanobisResult, Dictionary<string, double>>, AlgorithmResult> _fusionBlock;
         private readonly ActionBlock<AlgorithmResult> _senderBlock;
@@ -26,10 +26,9 @@ namespace TelemetryHealthPredictor.Services.Dataflow
             IResultSender sender
         )
         {
-            ExecutionDataflowBlockOptions algorithmBlockOptions = new()
+            ExecutionDataflowBlockOptions blockOptions = new()
             {
-                MaxDegreeOfParallelism = Environment.ProcessorCount,
-                EnsureOrdered = true
+                MaxDegreeOfParallelism = 1
             };
 
             GroupingDataflowBlockOptions groupingOptions = new()
@@ -37,19 +36,14 @@ namespace TelemetryHealthPredictor.Services.Dataflow
                 EnsureOrdered = true
             };
 
-            ExecutionDataflowBlockOptions senderOptions = new()
-            {
-                MaxDegreeOfParallelism = 1
-            };
-
-            _decoderBlock = new(decoder.DecoderDelegate, algorithmBlockOptions);
-            _kalmanBlock = new(kalmanFilter.KalmanFilterDelegate, algorithmBlockOptions);
+            _decoderBlock = new(decoder.DecoderDelegate, blockOptions);
+            _kalmanBlock = new(kalmanFilter.KalmanFilterDelegate, blockOptions);
             _broadcastBlock = new(result => result);
-            _mahalanobisBlock = new(mahalanobis.MahalanobisDelegate, algorithmBlockOptions);
-            _cusumBlock = new(cusum.CusumDelegate, algorithmBlockOptions);
+            _mahalanobisBlock = new(mahalanobis.MahalanobisDelegate, blockOptions);
+            _cusumBlock = new(cusum.CusumDelegate, blockOptions);
             _joinBlock = new(groupingOptions);
-            _fusionBlock = new(fusion.FusionDelegate, algorithmBlockOptions);
-            _senderBlock = new(sender.ResultSenderDelegate, senderOptions);
+            _fusionBlock = new(fusion.FusionDelegate, blockOptions);
+            _senderBlock = new(sender.ResultSenderDelegate, blockOptions);
 
             DataflowLinkOptions linkOptions = new()
             {
