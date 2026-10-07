@@ -21,11 +21,13 @@ namespace TelemetryHealthPredictor.Setup
                 (builder.Configuration.GetSection(nameof(KalmanSettings)));
             builder.Services.AddSingleton(KalmanDataBuilder.Build);
 
+            builder.Services.Configure<MahalanobisSettings>
+                (builder.Configuration.GetSection(nameof(MahalanobisSettings)));
+            builder.Services.AddSingleton(MahalanobisDataBuilder.Build);
+
             builder.Services.Configure<CusumSettings>
                 (builder.Configuration.GetSection(nameof(CusumSettings)));
             builder.Services.AddSingleton(CusumDataBuilder.Build);
-
-            builder.Services.AddSingleton<MahalanobisData>();
 
             builder.Services.AddSingleton<IDecoder, Decoder>();
             builder.Services.AddSingleton<IKalmanFilter, KalmanFilterMockup>();

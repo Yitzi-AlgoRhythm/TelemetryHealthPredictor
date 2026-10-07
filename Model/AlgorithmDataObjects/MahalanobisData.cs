@@ -1,13 +1,27 @@
 ﻿
 using MathNet.Numerics.LinearAlgebra;
+using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 
 namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 {
     public class MahalanobisData
     {
-        public double MahalanobisDistance { get; set; }
-        public Vector<double> Values { get; set; } = null!;
-        public Vector<double> Means { get; set; } = null!;
-        public Matrix<double> CovarianceMatrix { get; set; } = null!;
+        public required Vector<double> Means { get; init; }
+        public required Matrix<double> CovarianceMatrixInversed { get; init; }
+
+        public MahalanobisResult GetMahalanobisDistance(Vector<double> filteredResult)
+        {
+            Vector<double> differences = filteredResult - Means;
+
+            double distanceSquared = (differences * CovarianceMatrixInversed) * differences;
+
+            double mahalanobisDistance = Math.Sqrt(distanceSquared);
+
+            return new MahalanobisResult()
+            {
+                DistanceScore = mahalanobisDistance,
+                Anomalies = []
+            };
+        }
     }
 }
