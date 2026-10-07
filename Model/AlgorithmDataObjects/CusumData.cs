@@ -4,6 +4,8 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 {
     public class CusumData
     {
+        private readonly NamingData _namingData;
+
         public required double[] Slacks { get; init; }
         public required double[] Thresholds { get; init; }
 
@@ -13,7 +15,10 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
         public required double[] Means { get; set; }
         public required double[] StandardDeviations { get; set; }
 
-
+        public CusumData(NamingData namingData)
+        {
+            _namingData = namingData;
+        }
 
         public Dictionary<string, double> GetAnomalousCusums(Vector<double> filteredResult)
         {
@@ -34,7 +39,14 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
                 }
             }
 
-            return [];
+            Dictionary<string, double> result = [];
+
+            foreach (int index in anomalousIndices)
+            {
+                result.Add(_namingData.VariableNames[index], filteredResult[index]);
+            }
+
+            return result;
         }
     }
 }

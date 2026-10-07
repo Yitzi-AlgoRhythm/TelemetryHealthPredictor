@@ -6,8 +6,15 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 {
     public class MahalanobisData
     {
+        private readonly NamingData _namingData;
+
         public required Vector<double> Means { get; init; }
         public required Matrix<double> CovarianceMatrixInversed { get; init; }
+
+        public MahalanobisData(NamingData namingData)
+        {
+            _namingData = namingData;
+        }
 
         public MahalanobisResult GetMahalanobisDistance(Vector<double> filteredResult)
         {

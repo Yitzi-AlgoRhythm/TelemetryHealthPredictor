@@ -17,6 +17,10 @@ namespace TelemetryHealthPredictor.Setup
             builder.Services.Configure<KafkaConsumerConfig>
                 (builder.Configuration.GetSection(nameof(KafkaConsumerConfig)));
 
+            builder.Services.Configure<NamingSettings>
+                (builder.Configuration.GetSection(nameof(NamingSettings)));
+            builder.Services.AddSingleton(NamingDataBuilder.Build);
+
             builder.Services.Configure<KalmanSettings>
                 (builder.Configuration.GetSection(nameof(KalmanSettings)));
             builder.Services.AddSingleton(KalmanDataBuilder.Build);
