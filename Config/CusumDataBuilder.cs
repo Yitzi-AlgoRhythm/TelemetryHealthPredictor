@@ -18,6 +18,12 @@ namespace TelemetryHealthPredictor.Config
             double[] cusumInitValues = CSVReader.Load(nameof(settings.CusumInitValuesPath),
                 settings.CusumInitValuesPath, CSVReader.ReadDoubles);
 
+            double[] means = CSVReader.Load(nameof(settings.MeansPath),
+                settings.MeansPath, CSVReader.ReadDoubles);
+
+            double[] stds = CSVReader.Load(nameof(settings.STDsPath),
+                settings.STDsPath, CSVReader.ReadDoubles);
+
 
 
             return new CusumData()
@@ -25,7 +31,9 @@ namespace TelemetryHealthPredictor.Config
                 Slacks = slacks,
                 Thresholds = thresholds,
                 PositiveCusums = cusumInitValues,
-                NegativeCusums = cusumInitValues
+                NegativeCusums = cusumInitValues,
+                Means = means,
+                StandardDeviations = stds
             };
         }
     }
