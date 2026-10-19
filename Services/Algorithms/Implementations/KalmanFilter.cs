@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
+using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 using TelemetryHealthPredictor.Services.Algorithms.Abstractions;
 
 namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
@@ -13,12 +14,12 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
             _kalmanData = kalmanData;
         }
 
-        public Vector<double>[] KalmanFilterDelegate(KeyValuePair<string, double> parameterValue)
+        public KalmanFilterResult[] KalmanFilterDelegate(IncomingFlightParameter[] parameters)
         {
-            if (_kalmanData.AllMeasurementsIn(parameterValue))
-            {
-                return [_kalmanData.RunKalmanFilter()]; 
-            }
+            //if (_kalmanData.AllMeasurementsIn(parameter))
+            //{
+            //    return [_kalmanData.RunKalmanFilter()]; 
+            //}
 
             return [];
         }

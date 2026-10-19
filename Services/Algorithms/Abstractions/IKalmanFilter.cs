@@ -1,9 +1,11 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
+using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 
 namespace TelemetryHealthPredictor.Services.Algorithms.Abstractions
 {
     public interface IKalmanFilter
     {
-        public Vector<double>[] KalmanFilterDelegate(KeyValuePair<string, double> parameterValue);
+        public KalmanFilterResult[] KalmanFilterDelegate(IncomingFlightParameter[] parameters);
     }
 }

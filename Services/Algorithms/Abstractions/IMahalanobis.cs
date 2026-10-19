@@ -5,6 +5,6 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Abstractions
 {
     public interface IMahalanobis
     {
-        public MahalanobisResult MahalanobisDelegate(Vector<double> filteredResult);
+        public MahalanobisResult MahalanobisDelegate(KalmanFilterResult kalmanFilterResult);
     }
 }

@@ -16,9 +16,9 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
             _namingData = namingData;
         }
 
-        public MahalanobisResult GetMahalanobisDistance(Vector<double> filteredResult)
+        public MahalanobisResult RunMahalanobis(KalmanFilterResult kalmanFilterResult)
         {
-            Vector<double> differences = filteredResult - Means;
+            Vector<double> differences = kalmanFilterResult.FilteredParameterValues - Means;
 
             double distanceSquared = (differences * CovarianceMatrixInversed) * differences;
 

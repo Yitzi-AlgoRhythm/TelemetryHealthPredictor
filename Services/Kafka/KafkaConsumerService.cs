@@ -1,7 +1,11 @@
-﻿using Confluent.Kafka;
+﻿using System.Text.Json;
+using Confluent.Kafka;
 using Microsoft.Extensions.Options;
+using ParameterDataLib;
 using TelemetryHealthPredictor.Config;
+using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
 using TelemetryHealthPredictor.Services.Dataflow;
+using System.Linq;
 
 namespace TelemetryHealthPredictor.Services.Kafka
 {
@@ -45,7 +49,16 @@ namespace TelemetryHealthPredictor.Services.Kafka
 
                         if (result.Message.Value is not null)
                         {
-                            _pipeline.BeginAlgorithm(result.Message.Value);
+                            string json = result.Message.Value;
+
+                            ParameterData[] incomingParameterData = JsonSerializer.Deserialize<ParameterData[]>(json)!;
+
+                            IncomingFlightParameter[] incomingParameters = Array.ConvertAll(incomingParameterData, data =>
+                            {
+                                return new IncomingFlightParameter(data);
+                            });
+
+                            _pipeline.BeginAlgorithm(incomingParameters);
                         }
                     }
                     catch (ConsumeException ex)

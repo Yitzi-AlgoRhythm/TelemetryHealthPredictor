@@ -14,9 +14,9 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
             _mahalanobisData = mahalanobisData;
         }
 
-        public MahalanobisResult MahalanobisDelegate(Vector<double> filteredResult)
+        public MahalanobisResult MahalanobisDelegate(KalmanFilterResult kalmanFilterResult)
         {
-            return _mahalanobisData.GetMahalanobisDistance(filteredResult);
+            return _mahalanobisData.RunMahalanobis(kalmanFilterResult);
         }
     }
 }

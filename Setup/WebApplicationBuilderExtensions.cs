@@ -33,7 +33,6 @@ namespace TelemetryHealthPredictor.Setup
                 (builder.Configuration.GetSection(nameof(CusumSettings)));
             builder.Services.AddSingleton(CusumDataBuilder.Build);
 
-            builder.Services.AddSingleton<IDecoder, Decoder>();
             builder.Services.AddSingleton<IKalmanFilter, KalmanFilterMockup>();
             builder.Services.AddSingleton<IMahalanobis, MahalanobisMockup>();
             builder.Services.AddSingleton<ICusum, CusumMockup>();

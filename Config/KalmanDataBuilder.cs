@@ -55,7 +55,7 @@ namespace TelemetryHealthPredictor.Config
 
             return new KalmanData(measuredNames.Length)
             {
-                MeasuredVariableNames = measuredVariablesDict,
+                MeasuredVariableIndices = measuredVariablesDict,
                 StateVariableNames = stateNames,
                 TransitionMatrix = f,
                 StateToMeasShapeMatrix = h,

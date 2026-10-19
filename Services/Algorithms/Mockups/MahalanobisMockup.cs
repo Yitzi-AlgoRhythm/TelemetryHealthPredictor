@@ -6,7 +6,7 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Mockups
 {
     public class MahalanobisMockup : IMahalanobis
     {
-        public MahalanobisResult MahalanobisDelegate(Vector<double> filteredResult)
+        public MahalanobisResult MahalanobisDelegate(KalmanFilterResult kalmanFilterResult)
         {
             Console.WriteLine("Calculating Mahalanobis Distance");
 

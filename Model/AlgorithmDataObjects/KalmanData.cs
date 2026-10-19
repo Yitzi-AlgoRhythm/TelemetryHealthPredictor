@@ -1,10 +1,11 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 
 namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 {
     public class KalmanData
     {
-        public required Dictionary<string, int> MeasuredVariableNames { get; init; }
+        public required Dictionary<string, int> MeasuredVariableIndices { get; init; }
 
         private int _measuredVariableCount;
         private int _currentMeasuredVariableCount;
@@ -32,6 +33,9 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 
         private int _step;
 
+        private ulong _
+        private ulong _deltaTimeMS;
+
         private double _sageHusaWeightFactor;
 
         public KalmanData(int measuredVariableCount)
@@ -43,8 +47,9 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
             _step = 1;
         }
 
-        public Vector<double> RunKalmanFilter()
+        public KalmanFilterResult RunKalmanFilter(IncomingFlightParameter[] incomingFlightParameters)
         {
+            SetMeasurementsAndDelta(incomingFlightParameters);
             Predict();
             CalculateInnovation();
             PredictInnovationCovariance();
@@ -54,32 +59,13 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 
             _step++;
 
-            return PostMeasStatePredictionVector.Clone();
+            return new KalmanFilterResult(PostMeasStatePredictionVector);
         }
 
-        public bool AllMeasurementsIn(KeyValuePair<string, double> parameterValue)
-        {
-            int paramIndex = MeasuredVariableNames[parameterValue.Key];
-
-            Measurements[paramIndex] = parameterValue.Value;
-
-            _variableTimesMeasured[paramIndex]++;
-
-            if (_variableTimesMeasured[paramIndex] == 1)
-            {
-                _currentMeasuredVariableCount++;
-
-                if (_currentMeasuredVariableCount == _measuredVariableCount)
-                {
-                    _currentMeasuredVariableCount = 0;
-                    Array.Fill(_variableTimesMeasured, 0);
-
-                    return true;
-                }
-            }
-            return false;
-        }
-
+        /* 
+         * Predict uses F and Q. 
+         * Both of these matrices need to be adjusted based on
+         */
         private void Predict()
         {
             PreMeasStatePredictionVector = TransitionMatrix * PostMeasStatePredictionVector + ProcessBiasVector;
@@ -147,6 +133,19 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
             catch (ArgumentException)
             {
                 return false;
+            }
+        }
+
+        private void SetMeasurementsAndDelta(IncomingFlightParameter[] incomingFlightParameters)
+        {
+            _deltaTimeMS = 0;
+
+            foreach (IncomingFlightParameter parameter in incomingFlightParameters)
+            {
+                int paramIndex = MeasuredVariableIndices[parameter.Name];
+                Measurements[paramIndex] = parameter.Value;
+
+                ulong newDeltaT = parameter.Timestamp
             }
         }
     }

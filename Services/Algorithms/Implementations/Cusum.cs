@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
+using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 using TelemetryHealthPredictor.Services.Algorithms.Abstractions;
 
 namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
@@ -13,9 +14,9 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
             _cusumData = cusumData;
         }
 
-        public Dictionary<string, double> CusumDelegate(Vector<double> filteredResult)
+        public CusumResult CusumDelegate(KalmanFilterResult kalmanFilterResult)
         {
-            return _cusumData.GetAnomalousCusums(filteredResult);
+            return _cusumData.RunCusums(kalmanFilterResult);
         }
     }
 }

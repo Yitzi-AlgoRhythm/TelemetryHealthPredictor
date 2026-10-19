@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
+using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 
 namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 {
@@ -20,14 +21,16 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
             _namingData = namingData;
         }
 
-        public Dictionary<string, double> GetAnomalousCusums(Vector<double> filteredResult)
+        public CusumResult RunCusums(KalmanFilterResult kalmanFilterResult)
         {
+            Vector<double> filteredParameterValues = kalmanFilterResult.FilteredParameterValues;
+
             List<int> anomalousIndices = [];
 
-            for (int i = 0; i < filteredResult.Count; i++)
+            for (int i = 0; i < filteredParameterValues.Count; i++)
             {
                 double z = StandardDeviations[i] > 0
-                    ? (filteredResult[i] - Means[i]) / StandardDeviations[i]
+                    ? (filteredParameterValues[i] - Means[i]) / StandardDeviations[i]
                     : 0.0;
 
                 PositiveCusums[i] = Math.Max(0.0, PositiveCusums[i] + z - Slacks[i]);
@@ -43,10 +46,10 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 
             foreach (int index in anomalousIndices)
             {
-                result.Add(_namingData.VariableNames[index], filteredResult[index]);
+                result.Add(_namingData.VariableNames[index], filteredParameterValues[index]);
             }
 
-            return result;
+            return new CusumResult(result);
         }
     }
 }

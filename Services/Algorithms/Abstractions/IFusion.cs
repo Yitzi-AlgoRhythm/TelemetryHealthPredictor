@@ -4,6 +4,6 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Abstractions
 {
     public interface IFusion
     {
-        public AlgorithmResult FusionDelegate(Tuple<MahalanobisResult, Dictionary<string, double>> combinedResult);
+        public AlgorithmResult FusionDelegate(Tuple<MahalanobisResult, CusumResult> combinedResult);
     }
 }

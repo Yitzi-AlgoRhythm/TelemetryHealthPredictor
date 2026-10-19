@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks.Dataflow;
 using MathNet.Numerics.LinearAlgebra;
+using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
 using TelemetryHealthPredictor.Model.AlgorithmResultObjects;
 using TelemetryHealthPredictor.Services.Algorithms.Abstractions;
 
@@ -7,19 +8,17 @@ namespace TelemetryHealthPredictor.Services.Dataflow
 {
     public class Pipeline : IPipeline
     {
-        private readonly TransformBlock<string, KeyValuePair<string, double>> _decoderBlock;
-        private readonly TransformManyBlock<KeyValuePair<string, double>, Vector<double>> _kalmanBlock;
-        private readonly BroadcastBlock<Vector<double>> _broadcastBlock;
-        private readonly TransformBlock<Vector<double>, MahalanobisResult> _mahalanobisBlock;
-        private readonly TransformBlock<Vector<double>, Dictionary<string, double>> _cusumBlock;
-        private readonly JoinBlock<MahalanobisResult, Dictionary<string, double>> _joinBlock;
-        private readonly TransformBlock<Tuple<MahalanobisResult, Dictionary<string, double>>, AlgorithmResult> _fusionBlock;
+        private readonly TransformManyBlock<IncomingFlightParameter[], KalmanFilterResult> _kalmanBlock;
+        private readonly BroadcastBlock<KalmanFilterResult> _broadcastBlock;
+        private readonly TransformBlock<KalmanFilterResult, MahalanobisResult> _mahalanobisBlock;
+        private readonly TransformBlock<KalmanFilterResult, CusumResult> _cusumBlock;
+        private readonly JoinBlock<MahalanobisResult, CusumResult> _joinBlock;
+        private readonly TransformBlock<Tuple<MahalanobisResult, CusumResult>, AlgorithmResult> _fusionBlock;
         private readonly ActionBlock<AlgorithmResult> _senderBlock;
 
         public Pipeline
         (
-            IDecoder decoder, 
-            IKalmanFilter kalmanFilter, 
+            IKalmanFilter kalmanFilter,
             IMahalanobis mahalanobis, 
             ICusum cusum, 
             IFusion fusion, 
@@ -36,7 +35,6 @@ namespace TelemetryHealthPredictor.Services.Dataflow
                 EnsureOrdered = true
             };
 
-            _decoderBlock = new(decoder.DecoderDelegate, blockOptions);
             _kalmanBlock = new(kalmanFilter.KalmanFilterDelegate, blockOptions);
             _broadcastBlock = new(result => result);
             _mahalanobisBlock = new(mahalanobis.MahalanobisDelegate, blockOptions);
@@ -50,7 +48,6 @@ namespace TelemetryHealthPredictor.Services.Dataflow
                 PropagateCompletion = true
             };
 
-            _decoderBlock.LinkTo(_kalmanBlock, linkOptions);
             _kalmanBlock.LinkTo(_broadcastBlock, linkOptions);
             _broadcastBlock.LinkTo(_mahalanobisBlock, linkOptions);
             _broadcastBlock.LinkTo(_cusumBlock, linkOptions);
@@ -59,19 +56,19 @@ namespace TelemetryHealthPredictor.Services.Dataflow
             _joinBlock.LinkTo(_fusionBlock, linkOptions);
             _fusionBlock.LinkTo(_senderBlock, linkOptions);
         }
-        public void BeginAlgorithm(string json)
+        public void BeginAlgorithm(IncomingFlightParameter[] parameters)
         {
-            _decoderBlock.Post(json);
+            _kalmanBlock.Post(parameters);
         }
 
         public void Complete()
         {
-            _decoderBlock.Complete();
+            _kalmanBlock.Complete();
         }
 
         public void Fault(Exception ex)
         {
-            ((IDataflowBlock)_decoderBlock).Fault(ex);
+            ((IDataflowBlock)_kalmanBlock).Fault(ex);
         }
 
         public async Task Completion()

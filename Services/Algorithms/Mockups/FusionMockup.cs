@@ -5,7 +5,7 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Mockups
 {
     public class FusionMockup : IFusion
     {
-        public AlgorithmResult FusionDelegate(Tuple<MahalanobisResult, Dictionary<string, double>> combinedResult)
+        public AlgorithmResult FusionDelegate(Tuple<MahalanobisResult, CusumResult> combinedResult)
         {
             Console.WriteLine("Fusing results");
 
