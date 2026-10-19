@@ -46,7 +46,7 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
 
             foreach (int index in anomalousIndices)
             {
-                result.Add(_namingData.VariableNames[index], filteredParameterValues[index]);
+                result.Add(_namingData.ParameterNames[index], filteredParameterValues[index]);
             }
 
             return new CusumResult(result);

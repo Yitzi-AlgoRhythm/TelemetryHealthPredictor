@@ -2,6 +2,6 @@
 {
     public class NamingData
     {
-        public required string[] VariableNames { get; init; }
+        public required string[] ParameterNames { get; init; }
     }
 }

@@ -141,7 +141,7 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
             ComputeZScores();
             UpdateRSageHusa(indices, dt);
 
-            return new[] { new KalmanFilterResult(_Z_scores, indices) };
+            return [new KalmanFilterResult(_Z_scores, indices)];
         }
 
         /// <summary>

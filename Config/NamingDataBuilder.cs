@@ -14,7 +14,7 @@ namespace TelemetryHealthPredictor.Config
 
             return new NamingData()
             {
-                VariableNames = variableNames 
+                ParameterNames = variableNames 
             };
         }
     }
