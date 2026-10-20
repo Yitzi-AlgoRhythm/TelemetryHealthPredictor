@@ -27,7 +27,7 @@ namespace TelemetryHealthPredictor.Model.AlgorithmDataObjects
             return new MahalanobisResult()
             {
                 DistanceScore = mahalanobisDistance,
-                Anomalies = []
+                OutlierParameters = []
             };
         }
     }

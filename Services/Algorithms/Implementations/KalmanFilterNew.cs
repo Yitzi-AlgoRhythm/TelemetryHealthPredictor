@@ -113,7 +113,10 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
             _Kk = Matrix<double>.Build.Dense(_n, 0);
             _Yk = Vector<double>.Build.Dense(0);
             _Zk = Vector<double>.Build.Dense(0);
-            _Z_scores = Vector<double>.Build.Dense(0);
+
+            // Z-scores which will be reassigned each time by the new measurements.
+            // Needs a way to determine which Z-scores have been assigned and which haven't.
+            _Z_scores = Vector<double>.Build.Dense(parameterIndices.Count, double.NaN);
         }
 
         public KalmanFilterResult[] KalmanFilterDelegate(IncomingFlightParameter[] parameters)
@@ -138,8 +141,16 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
             BuildMeasurementModel(indices, values);
             ComputeInnovation();
             ComputeKalmanGainAndUpdate();
-            ComputeZScores();
+            ComputeZScores(indices);
             UpdateRSageHusa(indices, dt);
+
+            foreach (double z in _Z_scores)
+            {
+                if (double.IsNaN(z))
+                {
+                    return [];
+                }
+            }
 
             return [new KalmanFilterResult(_Z_scores, indices)];
         }
@@ -248,13 +259,18 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Implementations
         }
 
         /// <summary>Z-score per measured variable: Y_i / sqrt(S_ii). Aligned with IndicesMeasured.</summary>
-        private void ComputeZScores()
+        private void ComputeZScores(int[] indices)
         {
-            _Z_scores = Vector<double>.Build.Dense(_Yk.Count, i =>
+            Vector<double> newZScores = Vector<double>.Build.Dense(_Yk.Count, i =>
             {
                 double s = _Sk[i, i];
                 return s > 0 ? _Yk[i] / Math.Sqrt(s) : 0.0;
             });
+
+            for (int i = 0; i < indices.Length; i++)
+            {
+                _Z_scores[indices[i]] = newZScores[indices[i]];
+            }
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace TelemetryHealthPredictor.Services.Algorithms.Mockups
             return new MahalanobisResult()
             {
                 DistanceScore = 0,
-                Anomalies = []
+                OutlierParameters = []
             };
         }
     }
