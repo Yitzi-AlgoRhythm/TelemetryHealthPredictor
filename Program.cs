@@ -1,5 +1,5 @@
-using TelemetryHealthPredictor.Services.Connection;
-using TelemetryHealthPredictor.Setup;
+using TelemetryHealthPredictor.Setup.BuilderExtensions;
+using TelemetryHealthPredictor.Setup.Connection;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
