@@ -47,9 +47,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
         {
             RecalculateCusums(kalmanFilterResult);
 
-            Dictionary<string, double> anomalousCusums = GetAnomalousCusums(kalmanFilterResult);
-
-            return new CusumResult(anomalousCusums);
+            return GetAnomalousCusums(kalmanFilterResult);
         }
 
 
@@ -68,9 +66,11 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
             }
         }
 
-        private Dictionary<string, double> GetAnomalousCusums(KalmanFilterResult kalmanFilterResult)
+        private CusumResult GetAnomalousCusums(KalmanFilterResult kalmanFilterResult)
         {
-            Dictionary<string, double> anomalousCusums = [];
+            List<string> names = [];
+            List<double> amountsAboveThresholds = [];
+            List<double> values = [];
 
             foreach (int i in kalmanFilterResult.IndicesMeasured)
             {
@@ -83,11 +83,22 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
 
                 if (posExceeded || negExceeded)
                 {
-                    anomalousCusums[_parameterNames[i]] = posExceeded ? positiveCusum : -negativeCusum;
+                    double cusum = (posExceeded ? positiveCusum : -negativeCusum);
+
+                    amountsAboveThresholds.Add(cusum / h - 1);
+
+                    names.Add(_parameterNames[i]);
+
+                    values.Add(kalmanFilterResult.ParameterValues[i]);
                 }
             }
 
-            return anomalousCusums;
+            return new CusumResult()
+            {
+                AnomalousParameterNames = names,
+                AmountsAboveThresholds = amountsAboveThresholds,
+                AnomalousParameterValues = values
+            };
         }
     }
 }

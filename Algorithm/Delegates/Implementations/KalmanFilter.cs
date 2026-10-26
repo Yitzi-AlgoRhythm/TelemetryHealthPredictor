@@ -118,7 +118,13 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
                 return [];
             }
 
-            return [new KalmanFilterResult(_Z_scores, indicesInBatch)];
+            return [new KalmanFilterResult()
+            {
+                ParameterZScores = _Z_scores,
+                IndicesMeasured = indicesInBatch,
+                ParameterValues = _Xk.ToArray(),
+                DeltaT = deltaT,
+            }];
         }
 
         /// <summary>

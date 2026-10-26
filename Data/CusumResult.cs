@@ -2,11 +2,8 @@
 {
     public class CusumResult
     {
-        public Dictionary<string, double> AnomalousParameterCusums { get; init; }
-
-        public CusumResult(Dictionary<string, double> cusums)
-        {
-            AnomalousParameterCusums = cusums;
-        }
+        public required List<string> AnomalousParameterNames { get; set; }
+        public required List<double> AmountsAboveThresholds { get; set; }
+        public required List<double> AnomalousParameterValues { get; set; }
     }
 }

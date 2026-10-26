@@ -53,13 +53,14 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
 
             if (distanceSquared > _distanceSquaredThreshold)
             {
-                outliers = FindOutlierParameters(zScores, distanceSquared);
+                outliers = FindOutlierParameters(zScores, distanceSquared, kalmanFilterResult.ParameterValues);
             }
 
             return new MahalanobisResult()
             {
-                DistanceScore = Math.Sqrt(distanceSquared),
-                OutlierParameters = outliers
+                DistanceSquared = distanceSquared,
+                OutlierParameters = outliers,
+                DeltaT = kalmanFilterResult.DeltaT
             };
         }
 
@@ -70,7 +71,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
             return distanceSquared;
         }
 
-        private Dictionary<string, double> FindOutlierParameters(Vector<double> zScores, double distanceSquared)
+        private Dictionary<string, double> FindOutlierParameters(Vector<double> zScores, double distanceSquared, double[] parameterValues)
         {
             Vector<double> xTilde = zScores.Clone();
             HashSet<int> flagged = [];
@@ -122,7 +123,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
                 currentDistanceSquared = GetDistanceSquared(xTilde);
             }
 
-            return flagged.ToDictionary(i => _parameterNames[i], i => zScores[i]);
+            return flagged.ToDictionary(i => _parameterNames[i], i => parameterValues[i]);
         }
 
         /// <summary> 

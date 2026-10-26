@@ -39,7 +39,7 @@ namespace TelemetryHealthPredictor.Setup.BuilderExtensions
             builder.Services.AddSingleton<IKalmanFilter, KalmanFilter>();
             builder.Services.AddSingleton<IMahalanobis, Mahalanobis>();
             builder.Services.AddSingleton<ICusum, Cusum>();
-            builder.Services.AddSingleton<IFusion, FusionMockup>();
+            builder.Services.AddSingleton<IFusion, Fusion>();
             builder.Services.AddSingleton<IResultSender, ResultSender>();
 
             builder.Services.AddSingleton<IPipeline, Pipeline>();

@@ -4,13 +4,9 @@ namespace TelemetryHealthPredictor.Data
 {
     public class KalmanFilterResult
     {
-        public Vector<double> ParameterZScores { get; init; }
-        public int[] IndicesMeasured { get; init; }
-
-        public KalmanFilterResult(Vector<double> parameterZScores, int[] indicesMeasured)
-        {
-            ParameterZScores = parameterZScores.Clone();
-            IndicesMeasured = indicesMeasured;
-        }
+        public required Vector<double> ParameterZScores { get; init; }
+        public required int[] IndicesMeasured { get; init; }
+        public required double[] ParameterValues { get; init; }
+        public required double DeltaT { get; init; }
     }
 }
