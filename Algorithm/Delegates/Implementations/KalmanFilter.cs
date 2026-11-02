@@ -6,6 +6,7 @@ using TelemetryHealthPredictor.Model.AlgorithmDataObjects;
 
 namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
 {
+    // DISCUSSION: Split logic into modular pieces, don't write everything in one long class. Split the logic according to the SOLID principles
     public class KalmanFilter : IKalmanFilter
     {
         private const double MinVariance = 1e-9;
@@ -13,10 +14,12 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
         // ---- Fixed configuration (set once in the constructor, never modified) ----
         private readonly Dictionary<string, int> _parameterIndices;
         private readonly Matrix<double> _vanLoanBase; // 2n x 2n matrix [[-A, G Qc G^T], [0, A^T]] (per second)
+        // DISCUSSION: Meaningful names
         private readonly double _b;             // Sage-Husa forgetting factor per second
         private readonly int _stateVariableCount;                // state dimension
 
         // ---- Filter state, carried across calls ----
+        // DISCUSSION: Meaningful names
         private Matrix<double> _Rk;             // full n x n measurement noise (adapted over time)
         private Matrix<double> _Pk;             // state covariance
         private Vector<double> _Xk;             // state estimate
@@ -24,6 +27,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
         private bool _hasTimestamp;
 
         // ---- Per-step working variables (overwritten every call) ----
+        // DISCUSSION: Meaningful names
         private Matrix<double> _Hk, _R_prev_k, _Fk, _Qk, _Sk, _P_prev_k, _Kk;
         private Vector<double> _Yk, _Zk, _X_prev_k, _Z_scores;
 
@@ -37,16 +41,19 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
         /// <param name="forgettingFactor">Sage-Husa forgetting factor per second. Closer to 1 = longer memory.</param>
         public KalmanFilter
         (
+            // DISCUSSION: Meaningful names: always use meaningful names for variables, never use names like a, q, the point is that a new developer reading this code will be able to understand
             NamingData namingData,
-            Matrix<double> a,
+            Matrix<double> a, 
             Matrix<double> g,
             Vector<double> qc,
             Matrix<double> r0,
             Matrix<double> p0,
             Vector<double> x0,
-            double forgettingFactor
+            double forgettingFactorhe 
         )
         {
+            // DISCUSSION: This constructor is way too large, the logic shouldn't be handeled inside the constructor but rather split into their corresponding methods
+            // DISCUSSION: The logic is very hard to understand, you should simplify it and make it easier to understand
             _stateVariableCount = x0.Count;
 
             string[] parameterNames = namingData.ParameterNames;
@@ -68,6 +75,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
             _vanLoanBase.SetSubMatrix(0, _stateVariableCount, noiseCovariance);
             _vanLoanBase.SetSubMatrix(_stateVariableCount, _stateVariableCount, a.Transpose());
 
+            // DISCUSSION: There is a lot of repetition across the code here, think of a way to solve this
             _Rk = r0.Clone();
             _Pk = p0.Clone();
             _Xk = x0.Clone();

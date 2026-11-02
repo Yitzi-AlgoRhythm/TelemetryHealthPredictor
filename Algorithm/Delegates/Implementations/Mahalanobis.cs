@@ -71,6 +71,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
             return distanceSquared;
         }
 
+        // DISCUSSION: This method is way too long, split it accotding to SOLID principles
         private Dictionary<string, double> FindOutlierParameters(Vector<double> zScores, double distanceSquared, double[] parameterValues)
         {
             Vector<double> xTilde = zScores.Clone();
@@ -135,6 +136,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
             return zScores.PointwiseMultiply(_correlationMatrixInversed * zScores);
         }
 
+        // DISCUSSION: Why is this private static?
         private static Matrix<double> CovarianceToCorrelationInversed(Matrix<double> covariance)
         {
             Vector<double> standardDeviations = covariance.Diagonal().Map(Math.Sqrt);

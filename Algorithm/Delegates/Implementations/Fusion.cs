@@ -161,6 +161,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
             return MaxScore - (MaxScore - MinScore) * fraction;
         }
 
+        // DISCUSSION: Tuple here is a bad practice, since it's not clear what it's supposed to represent and causes repetition across references. use an object instead
         private AlgorithmResult BuildResult(Tuple<MahalanobisResult, CusumResult> combinedResult)
         {
             MahalanobisResult m = combinedResult.Item1;
@@ -170,6 +171,7 @@ namespace TelemetryHealthPredictor.Algorithm.Delegates.Implementations
             string parameterName;
             double parameterValue;
 
+            // DISCUSSION: Meaningful parameter names
             for (int i = 0; i < c.AnomalousParameterNames.Count; i++)
             {
                 parameterName = c.AnomalousParameterNames[i];
